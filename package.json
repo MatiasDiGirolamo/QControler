@@ -1,0 +1,13 @@
+{
+  "name": "qcontroler",
+  "private": true,
+  "version": "1.2.0",
+  "type": "module",
+  "scripts": {
+    "start": "node app.mjs",
+    "test": "node app.mjs --self-test"
+  },
+  "dependencies": {
+    "playwright-core": "1.62.1"
+  }
+}

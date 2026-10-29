@@ -1,0 +1,8 @@
+node_modules/
+*.zip
+*.png
+.codebase-memory/
+.env
+.env.*
+!.env.example
+*.log
