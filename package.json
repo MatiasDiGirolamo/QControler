@@ -1,11 +1,13 @@
 {
   "name": "qcontroler",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.4.2",
   "type": "module",
   "scripts": {
     "start": "node app.mjs",
-    "test": "node app.mjs --self-test"
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "node app.mjs --api-test",
+    "test:cleanup": "node app.mjs --cleanup-test"
   },
   "dependencies": {
     "playwright-core": "1.62.1"

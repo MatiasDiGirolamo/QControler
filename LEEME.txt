@@ -1,34 +1,49 @@
-QControler 1.2.0 - PRUEBA LOCAL Y PILOTO WEB REAL
+QControler 1.4.2 · BOCA / QUEUE-IT
 
-INICIAR
-Descomprimí todos los archivos juntos y ejecutá INICIAR.cmd. Requiere Chrome y Node.js. Reutiliza playwright-core del runtime de Codex o de node_modules local. Si falta: npm.cmd install --ignore-scripts.
-Arranca con cero sesiones. No crea navegadores por cambiar el selector.
+USO PARA EL PRÓXIMO EVENTO
+1. Ejecutá INICIAR.cmd y usá el panel que abre esa ejecución.
+2. Pegá la URL completa de la prefila de Boca en URL de prefila.
+3. Pulsá Iniciar automático. No hace falta Guardar ni Aplicar cantidad.
 
-PROBAR U2
-1. En Modo elegí Web real (hasta 3 sesiones).
-2. El enlace oficial precargado es https://www.allaccess.com.ar/event/u2
-3. Pulsá Guardar modo y enlace.
-4. Elegí 2 en Total deseado y pulsá Aplicar cantidad.
-La app abre cada página normalmente dentro de contextos aislados. No realiza compras, reservas, clics de verificación ni resuelve CAPTCHAs.
-Si todavía no hay fila, muestra Sitio abierto, Sin identificador y Espera: sin dato. No crea identificadores por su cuenta. La página debe mostrar/abrir la prefila; si el acceso a fila aún no está publicado, se necesitará el enlace oficial actualizado o iniciar la prueba cuando esté habilitado. No se garantiza que una página cargada antes de la prefila se actualice sola.
+Automático es la opción inicial. Solicita hasta 50 sesiones, una por vez, con cookies y almacenamiento separados. La cantidad efectiva depende de los recursos del equipo. El botón cambia a Pausar creación mientras funciona. El selector manual y la prueba local quedan en Opciones y prueba local.
+El modo local no abre páginas externas y sirve para verificar el aislamiento; no genera posiciones reales.
+La entrada inicial es Boca Socios. Para una prefila concreta necesitás el enlace publicado por Boca para ese evento. No se inventan códigos e ni se reutiliza un partido antiguo como próximo evento. Se recuerda el último enlace iniciado en settings.json.
 
-URLS Y ESTADOS
-Cada tarjeta muestra la URL actual. Cuando la página de Queue-it tiene un q UUID no vacío en la URL o un identificador visible reconocido, se muestra y habilita Copiar enlace de fila.
-Un q distinto entre tarjetas solo confirma que se observaron identificadores diferentes. No garantiza posiciones definitivas ni entradas.
-Los identificadores duplicados dentro del mismo evento se marcan. Solo se ordena por turno disponible o espera numérica explícita; valores como más de una hora no se convierten a números inventados.
-La lectura de las páginas ocurre cada 5 segundos SIN recargar ni consultar endpoints internos de Queue-it. El sitio conserva sus propios mecanismos de actualización. La detección depende del idioma y diseño de la página; si no se reconoce, se deja sin dato.
-La transferencia del enlace debe comprobarse en el evento. Conservá la sesión original. Las URLs de fila pueden dar acceso a tu posición: no las compartas públicamente.
-Vista de sesión es una IMAGEN, no una vista interactiva. La app todavía no integra la extensión ni permite completar la compra dentro del contexto. No se presenta como sistema listo para garantizar entradas.
+ENLACE COMPLETO
+Se preservan c (cliente), e (evento), t (destino), cid (idioma) y otros parámetros del enlace de entrada. Si pegás q o queueittoken, se eliminan esos datos personales para no reutilizar una posición en todas las sesiones. El panel informa esa normalización. Cada identificador mostrado debe provenir de la página de Queue-it; no se fabrican UUID de fila.
+No pegues enlaces /softblock/ o /hardblock/: son pantallas de verificación y se rechazan como entrada. Usá la URL original publicada.
 
-MEMORIA Y CIERRE
-En prueba local permite hasta 50; en web real el piloto permite hasta 3. No crear más de lo que soporte la PC.
-La creación se pausa si la RAM libre baja de 2 GB o del 20% del total (la reserva más alta), o CPU supera 75%. Las sesiones existentes siguen abiertas. Reanudar creación solo habilita futuras altas; no recarga ni reinicia las existentes.
-Detener todo en modo real pide confirmar porque cierra las sesiones y puede perder posiciones. Después cierra Chrome y elimina solo la carpeta temporal exclusiva de esa ejecución. No borra perfiles de otros lanzadores. Ctrl+C usa el mismo cierre. Un cierre forzado o corte de luz puede dejar restos.
-No cierres la consola mientras necesites conservar sesiones. No hay recuperación garantizada tras reiniciar. Este piloto todavía no sirve para completar una compra de extremo a extremo.
+PREFILA Y ESPERA
+La prefila espera el comienzo del evento. Puede mostrar un identificador antes de que exista una posición definitiva. La app distingue Prefila de En fila, Turno disponible y Requiere atención. En ventas programadas, Queue-it describe una asignación aleatoria de posiciones al finalizar la prefila; la configuración concreta de Boca debe comprobarse cuando esté activa.
+Lee el texto visible cada 5 segundos, sin recargar las páginas ni consultar endpoints internos. Reconoce Entrarás dentro de, ACTUALIZADO e Identificador de fila, además de mensajes en inglés e italiano. Ordena primero turnos disponibles y después esperas numéricas conocidas de menor a mayor. Más de una hora conserva su texto sin inventar un número exacto.
+Los 10 minutos para completar la compra no se confunden con el tiempo de espera.
+La hora de actualización de la fila y la última lectura local se muestran por separado. La app no calcula una cuenta regresiva propia a partir de datos viejos.
 
-COMPROBACIONES
-node --test tests/queue.test.mjs
-node app.mjs --self-test
+RECURSOS Y PAUSAS
+Reserva de RAM libre: el mayor valor entre 2 GB y el 20 % de RAM física. Pausa nuevas altas si se cruza esa reserva o la CPU supera el 75 %. Las sesiones existentes se mantienen abiertas. En automático, reintenta cuando se recupera margen estable durante 10 segundos (reserva + 256 MB y CPU menor al 60 %).
+Pausar creación frena las altas; no cierra las sesiones. Reanudar creación continúa hacia el total elegido.
+Verificaciones, errores de carga o fila finalizada frenan nuevas altas y se distinguen de una posición disponible. No se resuelven CAPTCHAs automáticamente.
+Detener todo cierra las sesiones y elimina solo los temporales propios de esa ejecución. Ctrl+C usa el mismo cierre. Un cierre forzado o corte de luz puede dejar restos. Después de Detener todo, podés cambiar el enlace y volver a pulsar Iniciar desde el mismo panel.
+
+VERSIONES
+La versión del programa y la del panel deben coincidir. Un panel desactualizado se bloquea con una instrucción de reinicio, para evitar mezclar una interfaz nueva con un programa anterior. No hace falta cerrar otros navegadores del usuario.
+
+LÍMITES DE LA PRUEBA
+Las capturas viejas de Boca se usaron como referencia de texto en pruebas. Falta comprobar la lectura en vivo sobre la próxima prefila/fila de Boca.
+La prueba real de Bologna del 29/10/2026 creó 9 contextos hasta el freno de RAM; recibió identificadores distintos y después verificaciones /softblock/ y un error de redirección. No se confirmó acceso ni transferencia de posición.
+La vista de sesión es una imagen. Este panel no integra la extensión, no compra y no completa la reserva. La transferencia de un enlace a otro navegador debe comprobarse en el evento. Conservá la sesión original y no publiques URLs personales.
+
+REQUISITOS Y PRUEBAS
+Requiere Chrome, Node.js y playwright-core. Puede reutilizar playwright-core del runtime local de Codex; si falta: npm.cmd install --ignore-scripts.
+node --test tests/queue.test.mjs tests/control.test.mjs
+node app.mjs --api-test
 node app.mjs --cleanup-test
-Las pruebas de identificadores y ranking usan datos ficticios explícitos en tests; no se confunden con posiciones reales.
-El piloto real con U2 abrió dos contextos en la página oficial el 29/10/2026 antes de la prefila. En esa prueba no aparecieron q ni posiciones; no se validó una fila activa de U2.
+Las pruebas locales de API crean solo dos contextos, verifican almacenamiento separado y cierran y limpian al terminar. Los identificadores de las pruebas de texto son ficticios.
+
+ARRANQUE Y CIERRE (1.4.1)
+Abrir el panel no lanza Chrome de sesiones ni crea un perfil temporal. Chrome se inicia solo al pulsar Iniciar. Detener todo cierra el contexto persistente y su navegador, espera cualquier arranque/creación pendiente y limpia los temporales. También permite volver a iniciar sin reiniciar la consola. El estado Chrome cerrado indica que no hay navegador de sesiones abierto.
+El panel utiliza http://127.0.0.1:38471. Si INICIAR.cmd se abre nuevamente, reutiliza ese panel en lugar de lanzar otra instancia. Los tests usan puertos temporales separados. Los paneles anteriores que usaban puertos aleatorios deben dejar de utilizarse; el panel actualizado es el de la dirección fija.
+
+CONTROLES (1.4.2)
+Se eliminó el acceso Tus sesiones del menú lateral. La lista de sesiones y sus enlaces sigue disponible dentro del panel general. Las lecturas de estado anteriores a una acción se descartan para que una respuesta atrasada no sobrescriba el estado actual de los botones. Las consultas tienen tiempo máximo y se sigue actualizando el estado si una operación tarda.
+Se comprobó desde la interfaz Iniciar, Detener y volver a Iniciar sin recargar. Durante esa comprobación la creación estaba esperando RAM libre por debajo de la reserva; el segundo inicio se aceptó y Detener volvió a habilitar los controles. La creación y cierre de contextos reales ya se comprobaron con las pruebas de API de 1.4.1.
