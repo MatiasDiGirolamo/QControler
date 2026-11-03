@@ -6,3 +6,7 @@ node_modules/
 .env.*
 !.env.example
 *.log
+
+platea-ledger.json*
+settings.json
+settings-platea.json

@@ -1,49 +1,18 @@
-QControler 1.4.2 · BOCA / QUEUE-IT
+QCONTROLLER 2.0.4
 
-USO PARA EL PRÓXIMO EVENTO
-1. Ejecutá INICIAR.cmd y usá el panel que abre esa ejecución.
-2. Pegá la URL completa de la prefila de Boca en URL de prefila.
-3. Pulsá Iniciar automático. No hace falta Guardar ni Aplicar cantidad.
+PLATEA: ejecuta INICIAR_PLATEA.cmd. Dos sesiones fijas, una por socio.
+Carga las cuentas en el panel y pulsa Iniciar las dos sesiones.
+No necesita instalar una extension. Control, tiempos y avisos desde la app.
+Busca en todos los sectores. Pago manual.
 
-Automático es la opción inicial. Solicita hasta 50 sesiones, una por vez, con cookies y almacenamiento separados. La cantidad efectiva depende de los recursos del equipo. El botón cambia a Pausar creación mientras funciona. El selector manual y la prueba local quedan en Opciones y prueba local.
-El modo local no abre páginas externas y sirve para verificar el aislamiento; no genera posiciones reales.
-La entrada inicial es Boca Socios. Para una prefila concreta necesitás el enlace publicado por Boca para ese evento. No se inventan códigos e ni se reutiliza un partido antiguo como próximo evento. Se recuerda el último enlace iniciado en settings.json.
+FILAS: ejecuta INICIAR_FILAS.cmd. Es otro bot, con su propia configuracion.
 
-ENLACE COMPLETO
-Se preservan c (cliente), e (evento), t (destino), cid (idioma) y otros parámetros del enlace de entrada. Si pegás q o queueittoken, se eliminan esos datos personales para no reutilizar una posición en todas las sesiones. El panel informa esa normalización. Cada identificador mostrado debe provenir de la página de Queue-it; no se fabrican UUID de fila.
-No pegues enlaces /softblock/ o /hardblock/: son pantallas de verificación y se rechazan como entrada. Usá la URL original publicada.
+Para actualizar cierra el programa/consola anterior, no solo Chrome.
+Manten juntas sesiones-ligeras y boca-extension.
+Instrucciones completas en README.md.
 
-PREFILA Y ESPERA
-La prefila espera el comienzo del evento. Puede mostrar un identificador antes de que exista una posición definitiva. La app distingue Prefila de En fila, Turno disponible y Requiere atención. En ventas programadas, Queue-it describe una asignación aleatoria de posiciones al finalizar la prefila; la configuración concreta de Boca debe comprobarse cuando esté activa.
-Lee el texto visible cada 5 segundos, sin recargar las páginas ni consultar endpoints internos. Reconoce Entrarás dentro de, ACTUALIZADO e Identificador de fila, además de mensajes en inglés e italiano. Ordena primero turnos disponibles y después esperas numéricas conocidas de menor a mayor. Más de una hora conserva su texto sin inventar un número exacto.
-Los 10 minutos para completar la compra no se confunden con el tiempo de espera.
-La hora de actualización de la fila y la última lectura local se muestran por separado. La app no calcula una cuenta regresiva propia a partir de datos viejos.
+No hay minimo de RAM para iniciar ni crear sesiones. Se conserva el limite de CPU y el maximo de sesiones de cada bot.
 
-RECURSOS Y PAUSAS
-Reserva de RAM libre: el mayor valor entre 2 GB y el 20 % de RAM física. Pausa nuevas altas si se cruza esa reserva o la CPU supera el 75 %. Las sesiones existentes se mantienen abiertas. En automático, reintenta cuando se recupera margen estable durante 10 segundos (reserva + 256 MB y CPU menor al 60 %).
-Pausar creación frena las altas; no cierra las sesiones. Reanudar creación continúa hacia el total elegido.
-Verificaciones, errores de carga o fila finalizada frenan nuevas altas y se distinguen de una posición disponible. No se resuelven CAPTCHAs automáticamente.
-Detener todo cierra las sesiones y elimina solo los temporales propios de esa ejecución. Ctrl+C usa el mismo cierre. Un cierre forzado o corte de luz puede dejar restos. Después de Detener todo, podés cambiar el enlace y volver a pulsar Iniciar desde el mismo panel.
+FILAS 2.0.3: lee los minutos del campo de espera de Boca y reconoce Entraras a la pagina web dentro de. El enlace para copiar de Boca contiene c, e, t, cid y q al final; se usa el identificador de cada sesion. Los enlaces vencidos no se muestran como posiciones disponibles.
 
-VERSIONES
-La versión del programa y la del panel deben coincidir. Un panel desactualizado se bloquea con una instrucción de reinicio, para evitar mezclar una interfaz nueva con un programa anterior. No hace falta cerrar otros navegadores del usuario.
-
-LÍMITES DE LA PRUEBA
-Las capturas viejas de Boca se usaron como referencia de texto en pruebas. Falta comprobar la lectura en vivo sobre la próxima prefila/fila de Boca.
-La prueba real de Bologna del 29/10/2026 creó 9 contextos hasta el freno de RAM; recibió identificadores distintos y después verificaciones /softblock/ y un error de redirección. No se confirmó acceso ni transferencia de posición.
-La vista de sesión es una imagen. Este panel no integra la extensión, no compra y no completa la reserva. La transferencia de un enlace a otro navegador debe comprobarse en el evento. Conservá la sesión original y no publiques URLs personales.
-
-REQUISITOS Y PRUEBAS
-Requiere Chrome, Node.js y playwright-core. Puede reutilizar playwright-core del runtime local de Codex; si falta: npm.cmd install --ignore-scripts.
-node --test tests/queue.test.mjs tests/control.test.mjs
-node app.mjs --api-test
-node app.mjs --cleanup-test
-Las pruebas locales de API crean solo dos contextos, verifican almacenamiento separado y cierran y limpian al terminar. Los identificadores de las pruebas de texto son ficticios.
-
-ARRANQUE Y CIERRE (1.4.1)
-Abrir el panel no lanza Chrome de sesiones ni crea un perfil temporal. Chrome se inicia solo al pulsar Iniciar. Detener todo cierra el contexto persistente y su navegador, espera cualquier arranque/creación pendiente y limpia los temporales. También permite volver a iniciar sin reiniciar la consola. El estado Chrome cerrado indica que no hay navegador de sesiones abierto.
-El panel utiliza http://127.0.0.1:38471. Si INICIAR.cmd se abre nuevamente, reutiliza ese panel en lugar de lanzar otra instancia. Los tests usan puertos temporales separados. Los paneles anteriores que usaban puertos aleatorios deben dejar de utilizarse; el panel actualizado es el de la dirección fija.
-
-CONTROLES (1.4.2)
-Se eliminó el acceso Tus sesiones del menú lateral. La lista de sesiones y sus enlaces sigue disponible dentro del panel general. Las lecturas de estado anteriores a una acción se descartan para que una respuesta atrasada no sobrescriba el estado actual de los botones. Las consultas tienen tiempo máximo y se sigue actualizando el estado si una operación tarda.
-Se comprobó desde la interfaz Iniciar, Detener y volver a Iniciar sin recargar. Durante esa comprobación la creación estaba esperando RAM libre por debajo de la reserva; el segundo inicio se aceptó y Detener volvió a habilitar los controles. La creación y cierre de contextos reales ya se comprobaron con las pruebas de API de 1.4.1.
+FILAS 2.0.4: cada tarjeta permite cerrar solo esa sesion. Al cerrar se pausa la creacion automatica para que no se reemplace. Las sesiones restantes mantienen su numero; los numeros cerrados no se reutilizan. Cerrar la ultima tambien cierra Chrome y limpia los temporales. Filas usa todo el ancho disponible y elimina la vista previa lateral. Platea conserva su propia vista y sus dos sesiones.

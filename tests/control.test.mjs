@@ -6,9 +6,11 @@ test('automático busca hasta 50; el límite no vuelve a 3 en modo real',()=>{
  for(const invalid of [0,51,-1,'',null,'abc',1.5])assert.throws(()=>selectedTarget(invalid));
  assert.equal(new URL(DEFAULT_ENTRY).hostname,'bocasocios.bocajuniors.com.ar');
 });
-test('el freno depende de RAM actual o CPU; no del crecimiento global acumulado',()=>{
+test('la RAM libre no frena la creación; la CPU conserva su límite',()=>{
  assert.equal(resourceReason({freeBytes:4e9,reserveBytes:3e9,cpu:20}),'');
- assert.match(resourceReason({freeBytes:2.9e9,reserveBytes:3e9,cpu:20}),/RAM/);
+ assert.equal(resourceReason({freeBytes:2.9e9,reserveBytes:3e9,cpu:20}),'');
+ assert.equal(resourceReason({freeBytes:0,reserveBytes:3e9,cpu:20}),'');
+ assert.equal(resourceReason({cpu:20}),'');
  assert.match(resourceReason({freeBytes:4e9,reserveBytes:3e9,cpu:76}),/CPU/);
  assert.equal(resourceReason({freeBytes:4e9,reserveBytes:3e9,cpu:75}),'');
 });

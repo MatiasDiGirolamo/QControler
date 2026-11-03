@@ -102,3 +102,34 @@ test('la prefila no obtiene prioridad sobre una posición ya asignada',()=>{
  const queued={...observeQueue({url:url(b),text:'Your estimated wait time is: 10 minutes'}),id:2};
  assert.equal(classifySessions([pre,queued])[0].id,2);
 });
+test('prefila Boca observada: apertura y contador quedan separados de la espera de turno',()=>{
+ const s=observeQueue({url:bocaEntry,text:'BOCA JRS\nVS\nDEF. Y JUSTICIA\nLa fila abrirá a las\n13:00\n39 11\nACTUALIZADO: 12:20:48\n'+a,queueIdText:a,countdownText:'39Minutos11Segundos'});
+ assert.equal(s.queueState,'Prefila');assert.equal(s.openingTime,'13:00');assert.equal(s.prefilaCountdown,'39 minutos 11 segundos');
+ assert.equal(s.wait,null);assert.equal(s.waitMinutes,null);assert.equal(s.queueId,a);assert.equal(s.siteUpdatedAt,'12:20:48');
+});
+test('el identificador de su campo DOM puede venir sin etiqueta ni q en la dirección',()=>{
+ const s=observeQueue({url:bocaEntry,text:'La fila abrirá a las 13:00',queueIdText:'\n'+a+'\n'});
+ assert.equal(s.queueId,a);assert.equal(new URL(s.queueLink).searchParams.get('q'),a);
+ for(const id of ['00000000-0000-0000-0000-000000000000','no-asignado'])assert.equal(observeQueue({url:bocaEntry,text:'La fila abrirá a las 13:00',queueIdText:id}).queueId,null);
+});
+test('al pasar de prefila a fila, usa la espera nueva y no conserva el contador anterior',()=>{
+ const s=observeQueue({url:bocaEntry,text:bocaText('5 MINUTOS'),queueIdText:a,countdownText:'39Minutos11Segundos'});
+ assert.equal(s.queueState,'En fila');assert.equal(s.waitMinutes,5);assert.equal(s.openingTime,null);assert.equal(s.prefilaCountdown,null);
+});
+test('un contador de prefila sin unidades no se transforma en minutos inventados',()=>{
+ const s=observeQueue({url:bocaEntry,text:'Se te asignará tu lugar cuando comience la fila de espera.',countdownText:'39 11'});
+ assert.equal(s.queueState,'Prefila');assert.equal(s.prefilaCountdown,null);assert.equal(s.waitMinutes,null);
+});
+test('Boca: lee la frase de la captura con salto de línea antes de web',()=>{
+ const s=observeQueue({url:bocaEntry,text:'Al llegar tu turno, tendrás 10 minutos para realizar la transacción.\nEntrarás a la página\nweb dentro de:\n12 MINUTOS\nACTUALIZADO: 13:24:03',queueIdText:a});
+ assert.equal(s.wait,'12 MINUTOS');assert.equal(s.waitMinutes,12);assert.equal(s.queueState,'En fila');
+});
+test('Boca: el campo de espera permite leer los minutos aunque cambie la etiqueta',()=>{
+ const s=observeQueue({url:bocaEntry,text:'En fila\nACTUALIZADO: 13:30:45',waitText:'16\u00a0MINUTOS',queueIdText:a});
+ assert.equal(s.wait,'16 MINUTOS');assert.equal(s.waitMinutes,16);
+});
+test('Boca: usa el identificador mostrado por el sitio y distingue un enlace vencido',()=>{
+ const s=observeQueue({url:url(a),text:'En fila',queueIdText:b});assert.equal(s.queueId,b);
+ const expired=observeQueue({url:'https://bocajuniors.queue-it.net/error?er=5&c=bocajuniors&e=ejemplo&q='+a,text:'EL NÚMERO DE FILA YA NO ESTÁ ACTIVO'});
+ assert.equal(expired.queueState,'Fila vencida');assert.equal(expired.queueLink,null);assert.equal(expired.waitMinutes,null);
+});
